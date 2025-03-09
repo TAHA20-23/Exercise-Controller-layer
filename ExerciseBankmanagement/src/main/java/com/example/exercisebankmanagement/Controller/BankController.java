@@ -55,12 +55,11 @@ public class BankController {
     @PatchMapping("/deposit/{id}")
     public Customer depositMoney(@PathVariable int id, @RequestParam double amount) {
         // Find customer by ID
-        Optional<Customer> customer = customers.stream()
-                .filter(c -> c.getId() == id)  // Compare with the id
-                .findFirst();
-        if (customer.isPresent()) {  // If customer exists
-            customer.get().setBalance(customer.get().getBalance() + amount);  // Add deposit amount to balance
-            return customer.get();  // Return the updated customer
+        for (Customer customer : customers) {
+            if (customer.getId() == id) {  // Compare with the id
+                customer.setBalance(customer.getBalance() + amount);  // Add deposit amount to balance
+                return customer;  // Return the updated customer
+            }
         }
         return null;  // If customer not found, return null
     }
@@ -69,13 +68,16 @@ public class BankController {
     @PatchMapping("/withdraw/{id}")
     public Customer withdrawMoney(@PathVariable int id, @RequestParam double amount) {
         // Find customer by ID
-        Optional<Customer> customer = customers.stream()
-                .filter(c -> c.getId() == id)  // Compare with the id
-                .findFirst();
-        if (customer.isPresent() && customer.get().getBalance() >= amount) {  // Check if balance is enough
-            customer.get().setBalance(customer.get().getBalance() - amount);  // Subtract withdrawal amount
-            return customer.get();  // Return the updated customer
+        for (Customer customer : customers) {
+            if (customer.getId() == id) {  // Compare with the id
+                if (customer.getBalance() >= amount) {  // Check if balance is enough
+                    customer.setBalance(customer.getBalance() - amount);  // Subtract withdrawal amount
+                    return customer;  // Return the updated customer
+                }
+            }
         }
         return null;  // If customer not found
     }
+
+
 }
