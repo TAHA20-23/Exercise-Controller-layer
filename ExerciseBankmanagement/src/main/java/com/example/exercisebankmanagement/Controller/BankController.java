@@ -32,17 +32,16 @@ public class BankController {
     @PutMapping("/update/{id}")
     public Customer updateCustomer(@PathVariable int id, @RequestBody Customer updatedCustomer) {
         // Find customer by ID
-        Optional<Customer> existingCustomer = customers.stream()
-                .filter(c -> c.getId() == id)  // Compare with the id
-                .findFirst();
-        if (existingCustomer.isPresent()) {  // If customer exists
-            Customer customer = existingCustomer.get();
-            customer.setUsername(updatedCustomer.getUsername());  // Update username
-            customer.setBalance(updatedCustomer.getBalance());  // Update balance
-            return customer;  // Return updated customer
+        for (Customer customer : customers) {
+            if (customer.getId() == id) {  // Compare with the id
+                customer.setUsername(updatedCustomer.getUsername());  // Update username
+                customer.setBalance(updatedCustomer.getBalance());  // Update balance
+                return customer;  // Return updated customer
+            }
         }
         return null;  // If customer not found, return null
     }
+
 
     // Endpoint to delete a customer
     @DeleteMapping("/delete/{id}")
